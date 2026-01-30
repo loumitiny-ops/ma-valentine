@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saint-Valentin 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            background-color: #FFE1F7;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden; /* Empêche le scroll horizontal */
+        }
+
+        /* --- HEADER RESPONSIVE --- */
+        .header {
+            text-align: center;
+            margin-top: 20px;
+            padding: 0 10px;
+            font-family: 'Great Vibes', cursive;
+            z-index: 5;
+        }
+        h1 { color: #C41616; font-size: clamp(60px, 15vw, 130px); line-height: 1; }
+        p { color: #C41616; font-size: clamp(20px, 5vw, 40px); margin-top: 5px; }
+
+        /* --- CONTENEUR DU COEUR RESPONSIVE --- */
+        .heart-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px; 
+            transition: margin-top 0.7s ease-in-out;
+        }
+
+        .heart-opened-margin { 
+            margin-top: clamp(60px, 15vh, 120px); 
+        }
+
+        #heart-svg {
+            width: 90%; /* S'adapte à la largeur du mobile */
+            height: auto;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.2));
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pulse { animation: heartbeat 1.5s infinite ease-in-out; }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* --- CONTENU INTERNE --- */
+        .inner-content {
+            position: absolute;
+            top: 45%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .key {
+            width: clamp(60px, 15vw, 100px);
+            cursor: pointer;
+            transition: all 0.5s ease;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+        .key.hide { opacity: 0; transform: scale(0) rotate(180deg); pointer-events: none; }
+
+        .valentine-question {
+            font-family: 'Great Vibes', cursive;
+            color: white;
+            font-size: clamp(24px, 6vw, 45px);
+            margin-bottom: 15px;
+            opacity: 0;
+            display: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+
+        .buttons-container {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .show { display: flex !important; animation: fadeIn 0.8s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- BOUTONS --- */
+        .btn {
+            padding: 10px 30px;
+            border-radius: 12px;
+            border: none;
+            font-size: clamp(16px, 4vw, 22px);
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            min-width: 140px;
+        }
+
+        .oui { background: #C41616; color: white; z-index: 100; position: relative; }
+        .non { background: white; color: #C41616; z-index: 10; }
+
+        /* --- POPUPS HACK --- */
+        .hack-popup {
+            position: fixed;
+            background: #f0f0f0;
+            border: 2px solid #333;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
+            padding: 15px;
+            width: 250px;
+            z-index: 1000;
+            font-family: 'Courier New', Courier, monospace;
+            animation: popupAppear 0.2s ease-out;
+        }
+        .hack-header { background: #000080; color: white; padding: 3px; margin: -15px -15px 10px -15px; font-size: 12px; display: flex; justify-content: space-between; }
+        .hack-msg { color: red; font-weight: bold; font-size: 14px; }
+
+        .floating-heart {
+            position: absolute;
+            user-select: none;
+            pointer-events: none;
+            z-index: 100;
+            animation: fly 2.5s ease-out forwards;
+        }
+
+        @keyframes fly {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(var(--r)) scale(var(--s)); opacity: 0; }
+        }
+
+        .heart-wrapper.heart-opened #heart-svg { transform: scale(1.15); }
+
+        /* Ajustements spécifiques mobiles */
+        @media (max-width: 480px) {
+            .heart-wrapper { margin-top: 20px; }
+            .heart-opened-margin { margin-top: 50px; }
+            .btn { padding: 8px 25px; min-width: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Saint-Valentin</h1>
+        <p>14 février 2026</p>
+    </div>
+
+    <div class="heart-wrapper" id="main-container">
+        <svg id="heart-svg" class="pulse" viewBox="0 0 500 500">
+            <defs>
+                <radialGradient id="grad1" cx="35%" cy="35%" r="70%">
+                    <stop offset="0%" style="stop-color:#ff5c70;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#a00010;stop-opacity:1" />
+                </radialGradient>
+            </defs>
+            <path d="M250,450 C250,450 450,330 450,180 C450,80 370,40 300,40 C260,40 250,80 250,80 C250,80 240,40 200,40 C130,40 50,80 50,180 C50,330 250,450 250,450 Z" fill="url(#grad1)" />
+        </svg>
+
+        <div class="inner-content">
+            <div class="key" id="key">
+                <svg viewBox="0 0 24 24" fill="#FFD700"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+            </div>
+            <div class="valentine-question" id="valentine-q">Veux-tu être ma Valentine ?</div>
+            <div class="buttons-container" id="buttons">
+                <button class="btn oui" id="btn-oui">Oui ❤️</button>
+                <button class="btn non" id="btn-non">Non 💔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const key = document.getElementById('key');
+        const heartSvg = document.getElementById('heart-svg');
+        const buttons = document.getElementById('buttons');
+        const valentineQ = document.getElementById('valentine-q');
+        const container = document.getElementById('main-container');
+        const btnOui = document.getElementById('btn-oui');
+        const btnNon = document.getElementById('btn-non');
+
+        let scaleOui = 1;
+        let growthInterval;
+        const hackMessages = ["ERREUR SYSTÈME", "PIRATAGE...", "DIT OUI !", "ACCÈS REFUSÉ", "VIRUS D'AMOUR"];
+
+        key.addEventListener('click', () => {
+            heartSvg.classList.remove('pulse');
+            key.classList.add('hide');
+            container.classList.add('heart-opened');
+            container.classList.add('heart-opened-margin');
+            
+            // Explosion de cœurs (adaptée pour mobile : moins d'un coup pour éviter les lags)
+            let count = window.innerWidth < 480 ? 60 : 120;
+            for(let i = 0; i < count; i++) setTimeout(createFlyingHeart, i * 10);
+            
+            setTimeout(() => valentineQ.classList.add('show'), 600);
+            setTimeout(() => { 
+                buttons.classList.add('show'); 
+                startGrowing();
+            }, 1000);
+        });
+
+        function startGrowing() {
+            growthInterval = setInterval(() => {
+                scaleOui *= 1.08; 
+                btnOui.style.transform = `scale(${scaleOui})`;
+                if (scaleOui > 100) clearInterval(growthInterval);
+            }, 700);
+        }
+
+        btnNon.addEventListener('click', () => {
+            for(let i = 0; i < 10; i++) setTimeout(createPopup, i * 200);
+        });
+
+        function createPopup() {
+            const popup = document.createElement('div');
+            popup.className = 'hack-popup';
+            const randomMsg = hackMessages[Math.floor(Math.random() * hackMessages.length)];
+            popup.innerHTML = `<div class="hack-header"><span>Error.exe</span><span>X</span></div><p class="hack-msg">${randomMsg}</p>`;
+            popup.style.left = Math.random() * (window.innerWidth - 250) + 'px';
+            popup.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 3000);
+        }
+
+        function createFlyingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = '50%';
+            heart.style.top = '45%';
+            // Portée réduite sur mobile
+            let range = window.innerWidth < 480 ? 300 : 800;
+            const x = (Math.random() - 0.5) * range + 'px';
+            const y = (Math.random() - 0.5) * range + 'px';
+            heart.style.fontSize = (Math.random() * 30 + 15) + 'px';
+            heart.style.color = '#ff2d55';
+            heart.style.setProperty('--x', x);
+            heart.style.setProperty('--y', y);
+            heart.style.setProperty('--r', Math.random() * 360 + 'deg');
+            heart.style.setProperty('--s', Math.random() * 1.5 + 0.5);
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 2500);
+        }
+
+        btnOui.addEventListener('click', () => {
+            clearInterval(growthInterval);
+            alert("Bonne réponse ! ❤️");
+            location.reload();
+        });
+    </script>
+</body>
+</html>
